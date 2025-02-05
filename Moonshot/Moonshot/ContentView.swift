@@ -11,31 +11,37 @@ struct ContentView: View {
 	let astronauts: [String: Astronaut] = Bundle.main.decode("astronauts.json")
 	let missions: [Mission] = Bundle.main.decode("missions.json")
 
-	let columns = [
-		GridItem(.adaptive(minimum: 150))
-	]
+	@State var isList = false
+	var selectedList: String {
+		isList ? "list.bullet" : "circle.grid.3x3"
+	}
 
     var body: some View {
 		NavigationStack {
-			ScrollView {
-				LazyVGrid(columns: columns) {
-					ForEach(missions) { mission in
-						NavigationLink {
-							MissionView(mission: mission, astronauts: astronauts)
-						} label : {
-							LabelView(mission: mission)
-						}
-					}
+			Group {
+				if isList {
+					GridView(missions: missions, astronauts: astronauts)
+				} else {
+					ListView(missions: missions, astronauts: astronauts)
 				}
-				.padding([.horizontal, .bottom])
 			}
 			.navigationTitle("Moonshot")
 			.background(.darkBackground)
+			.toolbar {
+				Button {
+					isList.toggle()
+				} label: {
+					Image(systemName: selectedList)
+				}
+				.padding(.trailing, 5)
+				.foregroundStyle(.white)
+			}
+//			.background(.darkBackground)
 			.preferredColorScheme(.dark)
 		}
     }
 
-	struct LabelView: View {
+	struct MissionLabelGridView: View {
 		let mission: Mission
 
 		var body: some View {
@@ -62,6 +68,71 @@ struct ContentView: View {
 				RoundedRectangle(cornerRadius: 10)
 					.stroke(.lightBackground)
 			)
+		}
+	}
+
+	struct GridView: View {
+		let columns = [
+			GridItem(.adaptive(minimum: 150))
+		]
+
+		let missions: [Mission]
+		let astronauts: [String: Astronaut]
+
+		var body: some View {
+			ScrollView {
+				LazyVGrid(columns: columns) {
+					ForEach(missions) { mission in
+						NavigationLink {
+							MissionView(mission: mission, astronauts: astronauts)
+						} label : {
+							MissionLabelGridView(mission: mission)
+						}
+					}
+				}
+				.padding([.horizontal, .bottom])
+			}
+		}
+	}
+
+	struct ListView: View {
+		let missions: [Mission]
+		let astronauts: [String: Astronaut]
+
+		var body: some View {
+			List {
+				Group {
+					ForEach(missions) { mission in
+						NavigationLink {
+							MissionView(mission: mission, astronauts: astronauts)
+						} label : {
+							VStack(alignment: .leading) {
+								HStack {
+									Image(mission.image)
+										.resizable()
+										.scaledToFit()
+										.frame(width: 100, height: 70)
+									VStack {
+										Text(mission.displayName)
+											.font(.headline)
+											.foregroundStyle(.white)
+										Text(mission.formattedLaunchDate)
+											.font(.caption)
+											.foregroundStyle(.gray)
+									}
+								}
+								Rectangle()
+									.frame(height: 2)
+									.foregroundStyle(.white.opacity(0.5))
+									.padding(.vertical)
+							}
+						}
+					}
+				}
+				.listRowBackground(Color.lightBackground)
+				.listRowSeparator(.hidden)
+			}
+			.scrollContentBackground(.hidden)
 		}
 	}
 }
