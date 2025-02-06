@@ -121,10 +121,7 @@ struct ContentView: View {
 											.foregroundStyle(.gray)
 									}
 								}
-								Rectangle()
-									.frame(height: 2)
-									.foregroundStyle(.white.opacity(0.5))
-									.padding(.vertical)
+								CustomDividerView()
 							}
 						}
 					}

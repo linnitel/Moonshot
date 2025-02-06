@@ -36,21 +36,14 @@ struct MissionView: View {
 						Spacer()
 					}
 
-					Rectangle()
-						.frame(height: 2)
-						.foregroundStyle(.lightBackground)
-						.padding(.vertical)
-
+					CustomDividerView()
 
 					Text("Mission Highlights")
 						.font(.title.bold())
 						.padding(.bottom, 5)
 					Text(mission.description)
 
-					Rectangle()
-						.frame(height: 2)
-						.foregroundStyle(.lightBackground)
-						.padding(.vertical)
+					CustomDividerView()
 
 					Text("Crew")
 						.font(.title.bold())
