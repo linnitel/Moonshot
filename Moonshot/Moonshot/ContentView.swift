@@ -38,6 +38,10 @@ struct ContentView: View {
 			}
 //			.background(.darkBackground)
 			.preferredColorScheme(.dark)
+			.navigationDestination(for: Mission.self, destination: { mission in
+				MissionView(mission: mission, astronauts: astronauts)
+
+			})
 		}
     }
 
@@ -83,11 +87,9 @@ struct ContentView: View {
 			ScrollView {
 				LazyVGrid(columns: columns) {
 					ForEach(missions) { mission in
-						NavigationLink {
-							MissionView(mission: mission, astronauts: astronauts)
-						} label : {
+						NavigationLink(value: mission, label: {
 							MissionLabelGridView(mission: mission)
-						}
+						})
 					}
 				}
 				.padding([.horizontal, .bottom])
@@ -103,27 +105,9 @@ struct ContentView: View {
 			List {
 				Group {
 					ForEach(missions) { mission in
-						NavigationLink {
-							MissionView(mission: mission, astronauts: astronauts)
-						} label : {
-							VStack(alignment: .leading) {
-								HStack {
-									Image(mission.image)
-										.resizable()
-										.scaledToFit()
-										.frame(width: 100, height: 70)
-									VStack {
-										Text(mission.displayName)
-											.font(.headline)
-											.foregroundStyle(.white)
-										Text(mission.formattedLaunchDate)
-											.font(.caption)
-											.foregroundStyle(.gray)
-									}
-								}
-								CustomDividerView()
-							}
-						}
+						NavigationLink(value: mission, label: {
+							ListLabelView(mission: mission)
+						})
 					}
 				}
 				.listRowBackground(Color.lightBackground)
@@ -136,4 +120,28 @@ struct ContentView: View {
 
 #Preview {
     ContentView()
+}
+
+struct ListLabelView: View {
+	var mission: Mission
+
+	var body: some View {
+		VStack(alignment: .leading) {
+			HStack {
+				Image(mission.image)
+					.resizable()
+					.scaledToFit()
+					.frame(width: 100, height: 70)
+				VStack {
+					Text(mission.displayName)
+						.font(.headline)
+						.foregroundStyle(.white)
+					Text(mission.formattedLaunchDate)
+						.font(.caption)
+						.foregroundStyle(.gray)
+				}
+			}
+			CustomDividerView()
+		}
+	}
 }
